@@ -33,13 +33,16 @@ cd /usr/local/src
 git clone https://github.com/graphite-project/graphite-web.git
 git clone https://github.com/graphite-project/carbon.git
 git clone https://github.com/graphite-project/whisper.git
-git clone https://github.com/armon/statsite.git
+#git clone https://github.com/armon/statsite.git
+wget https://github.com/statsite/statsite/archive/v0.8.0.tar.gz
+tar -xf v0.8.0.tar.gz
+mv statsite-0.8.0 statsite
 
 # Build and install Graphite/Carbon/Whisper and Statsite
 cd whisper; git checkout ${GRAPHITE_RELEASE}; python setup.py install
 cd ../carbon; git checkout ${GRAPHITE_RELEASE}; pip install -r requirements.txt; python setup.py install
 cd ../graphite-web; git checkout ${GRAPHITE_RELEASE}; pip install -r requirements.txt; python check-dependencies.py; python setup.py install
-cd ../statsite; ./autogen.sh; ./configure; make; cp statsite /usr/local/sbin/; cp sinks/graphite.py /usr/local/sbin/statsite-sink-graphite.py
+cd ../statsite; ./bootstrap.sh; ./configure; make; cp src/statsite /usr/local/sbin/; cp sinks/graphite.py /usr/local/sbin/statsite-sink-graphite.py
 
 # Install configuration files for Graphite/Carbon and Apache
 cp ${SYNTHESIZE_HOME}/templates/statsite/statsite.conf /etc/statsite.conf
@@ -89,4 +92,3 @@ service memcached start
 service collectd start
 service apache2 start
 service statsite start
-
